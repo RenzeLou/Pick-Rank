@@ -1,3 +1,6 @@
+'''
+This script is used to delete the large model files under a given path.
+'''
 import os
 import argparse
 
