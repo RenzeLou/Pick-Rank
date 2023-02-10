@@ -261,7 +261,7 @@ def main():
     key = lambda x:x[1][-1]
     results = dict(sorted(results.items(),key=key,reverse=True))
     
-    print("\nTotally {} EXP results under './{}':".format(len(results),args.path))
+    print("\nTotally {} EXP results under '{}':".format(len(results),args.path))
     print("EXP Name\t[EM, RougeL, RougeL(overall)]")
     for k,v in results.items():
         print("{}:\t{}".format(k,v))
