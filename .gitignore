@@ -1,0 +1,205 @@
+# data
+# data/
+beaker_configs/ni_*.yaml
+backup/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# big file
+cache/
+output_attention/
+output/
+download/
+.vscode/
+neg_pretrain/
+neg_pretrain_def_from_others/
+neg_pretrain_no_examples/
+output_add_neg_out/
+output_add_neg_out-pos_2/
+output_add_neg_out-pos_1/
+output_add_neg_out-more_4/
+output_add_neg_out-more_5/
+output_null_def_cons/
+output_neg_def_split/
+output_null_neg_out/
+output_null_neg/
+output_null/
+output_memory
+output_silver_out_examples/
+pred_examples_from_training/
+output_adv/
+output_random_words_neg/
+teacher_model/
+output_concat/
+output_concat_kv_sep/
+output_concat_kv_sep_diff/
+output_first_last/
+output_first_last_repeat/
+output_memory_def_del/
+output_memory_def_seg/
+output_null_v2/
+output_repeat/
+output_repeat_null/
+output_repeat_tune_on_null/
+output_pointer/
+output_pointer-cross_ori-pred_ori-rank_rep/
+output_pointer-cross_ori-pred_rep-rank_rep/
+output_pointer-cross_rep-pred_rep/
+output_pointer-cross_rep-pred_rep_detach/
+output_pointer-cross_rep-pred_rep_ori-anchor/
+output_pointer-null_ori/
+output_pointer-cross_rep-pred_rep_ori-anchor/runs
+output_pointer-cross_rep-pred_rep_detach/runs
+output_pointer_first_train/
+output_pointer_first_train-rank_null/
+output_pointer_first_train-rank_null-fix_bug_in_pooling/
+data/tasks/task*.json
+output_pointer_first_train-v2/
+output_pointer_compare_rep_ori/
+output_pointer_compare_rep_ori/runs/
+output_pointer_compare_rep_ori/runs/Jan15_21-14-30_acl/
+output_pointer_first_train-v2_add_pos/
+output_pointer_final/
+Tk-Instruct-2/
+*.example
+*.example.e*
+*.example.o*
+test-gpu.e*
+test-gpu.o*
+output_pointer_final_large/
+*.tar.gz
+*.whl
+output_test/
+*.e[0-9]*
+*.o[0-9]*
+*.swp
+*.lock
+plot/
