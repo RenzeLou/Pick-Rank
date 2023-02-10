@@ -35,7 +35,7 @@ def main():
     random.seed(args.seed)
     np.random.seed(args.seed)
 
-    task_path = "./data/tasks"
+    task_path = "./data/tasks/def_segmentation"
     PREFIX = len(task_path) + 1
     split_path = "./data/splits/add_dev"
 
@@ -161,20 +161,27 @@ def main():
                 if len(all_lan) == 1 and "English" in all_lan:    
                     en_tk_num += 1
                     de_en_tk_num += 1
-        # print all the statistics
-        print("\n" + "="*40 + "\n")
-        print("train_num: ",train_num,"test_num: ",test_num,"dev_num: ",dev_num)
-        # print(train_ins_num,test_ins_num,dev_ins_num)
-        print("train_w_num: ",np.mean(train_w_num),"test_w_num: ",np.mean(test_w_num),"dev_w_num: ",np.mean(dev_w_num))
-        print("train_s_num: ",np.mean(train_s_num),"test_s_num: ",np.mean(test_s_num),"dev_s_num: ",np.mean(dev_s_num))
-        print("all_w_num: ",np.mean(all_w_num),"all_s_num: ",np.mean(all_s_num),sep="\n")
-        print("train_tk_type: ",len(set(train_tk_type)),"test_tk_type: ",len(set(test_tk_type)),"dev_tk_type: ",len(set(dev_tk_type)))
-        print("train_dm_type: ",len(set(train_dm_type)),"test_dm_type: ",len(set(test_dm_type)),"dev_dm_type: ",len(set(dev_dm_type)))
-        print("train_sc_type: ",len(set(train_sc_type)),"test_sc_type: ",len(set(test_sc_type)),"dev_sc_type: ",len(set(dev_sc_type)))
-        train_overlap = set(train_sc_type) & set(test_sc_type)
-        dev_overlap = set(dev_sc_type) & set(test_sc_type)
-        print("train_overlap: ",len(train_overlap),len(train_overlap)/len(set(train_sc_type)),"dev_overlap: ",len(dev_overlap),len(dev_overlap)/len(set(dev_sc_type)))
-        print("all_tk_num",all_tk_num,"en_tk_num: ",en_tk_num,"tr_en_tk_num: ",tr_en_tk_num,"te_en_tk_num: ",te_en_tk_num,"de_en_tk_num: ",de_en_tk_num)
+    # print all the statistics
+    print("\n" + "="*40 + "\n")
+    print("\n==>1. Task Number:")
+    print(f"train_num: {train_num}",f"test_num: {test_num}",f"dev_num: {dev_num}",sep="\t")
+    # print(train_ins_num,test_ins_num,dev_ins_num)
+    print("\n==>2. AVG Length:")
+    print(f"train_words_num: {np.mean(train_w_num)}",f"test_words_num: {np.mean(test_w_num)}",f"dev_words_num: {np.mean(dev_w_num)}",sep="\t")
+    print(f"train_sen_num: {np.mean(train_s_num)}",f"test_sen_num: {np.mean(test_s_num)}",f"dev_sen_num: {np.mean(dev_s_num)}",sep="\t")
+    print(f"all_words_num: {np.mean(all_w_num)}",f"all_sen_num: {np.mean(all_s_num)}",sep="\t")
+    print("\n==>3. Task Type:")
+    print(f"train_tk_type: {len(set(train_tk_type))}",f"test_tk_type: {len(set(test_tk_type))}",f"dev_tk_type: {len(set(dev_tk_type))}",sep="\t")
+    print("\n==>4. Task Domain:")
+    print(f"train_dm_type: {len(set(train_dm_type))}",f"test_dm_type: {len(set(test_dm_type))}",f"dev_dm_type: {len(set(dev_dm_type))}",sep="\t")
+    print("\n==>5. Task Source:")
+    print(f"train_sc_type: {len(set(train_sc_type))}",f"test_sc_type: {len(set(test_sc_type))}",f"dev_sc_type: {len(set(dev_sc_type))}",sep="\t")
+    train_overlap = set(train_sc_type) & set(test_sc_type)
+    dev_overlap = set(dev_sc_type) & set(test_sc_type)
+    print(f"train_overlap: {len(train_overlap)/len(set(train_sc_type))} ({len(train_overlap)})",f"dev_overlap: {len(dev_overlap)/len(set(dev_sc_type))} ({len(dev_overlap)})",sep="\t")
+    print("\n==>6. English Tasks NUM:")
+    print(f"train_en_tk_num: {tr_en_tk_num}",f"test_en_tk_num: {te_en_tk_num}",f"dev_en_tk_num: {de_en_tk_num}",sep="\t")
+    print(f"all_tk_num: {all_tk_num}",f"en_tk_num: {en_tk_num}",sep="\t")
         
         
 if __name__ == "__main__":

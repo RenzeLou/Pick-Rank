@@ -9,8 +9,8 @@ import argparse
 import random
 import copy
 import numpy as np
+import multiprocessing
 from tqdm import tqdm
-from shutil import copyfile
 
 sys.path.append(os.path.abspath("./kit/"))
 sys.path.append(os.path.abspath("./"))
@@ -73,31 +73,6 @@ def main():
         
 
     all_tasks_pt = FindAllSuffix(task_path,"json")
-        ## === > since we need to replace the instruction with instruction from other tasks, we need to read in advance
-        # other_instructions = dict()
-        # other_instructions_test = dict()
-        # for _,tk_pt in enumerate(all_tasks_pt):
-        #     # tk_name = tk_pt.rsplit("/",1)[-1].rsplit(".",1)[0]
-        #     tk_name = tk_pt[PREFIX:len(tk_pt)-5]
-        #     if all_tr_tasks_key.get(tk_name,0) == 1:
-        #         with open(tk_pt,"r",encoding="utf-8") as tk:
-        #             tk_info = json.load(tk) 
-        #             cate = tk_info["Categories"][0]
-        #             instruction = copy.deepcopy(tk_info["Definition"][0])
-        #             if other_instructions.get(cate,None) is None:
-        #                 other_instructions[cate] = [instruction]
-        #             else:
-        #                 other_instructions[cate].append(instruction)
-        #     elif all_te_tasks_key.get(tk_name,0) == 1:
-        #         with open(tk_pt,"r",encoding="utf-8") as tk:
-        #             tk_info = json.load(tk) 
-        #             cate = tk_info["Categories"][0]
-        #             instruction = copy.deepcopy(tk_info["Definition"][0])
-        #             if other_instructions_test.get(cate,None) is None:
-        #                 other_instructions_test[cate] = [instruction]
-        #             else:
-        #                 other_instructions_test[cate].append(instruction)
-        ## ==== >
     for _,tk_pt in enumerate(tqdm(all_tasks_pt)):
         tk_name = tk_pt[PREFIX:len(tk_pt)-5]
         # if all_tr_tasks_key.get(tk_name,0) == 1 or all_te_tasks_key.get(tk_name,0) == 1:
@@ -140,4 +115,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    # pool = multiprocessing.Pool(4)
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    pool.apply_async(func=main)
+    pool.close()
+    pool.join()

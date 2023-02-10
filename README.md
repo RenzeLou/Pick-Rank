@@ -26,7 +26,7 @@ We use the [Super-NaturalInstructions](https://arxiv.org/abs/2204.07705) for the
 git clone git@github.com:allenai/natural-instructions.git data
 ```
 
-Since there is no official development set in the Super-NaturalInstructions, we randomly select 100 tasks from the "excluded" set as the development set to tune the hyper-parameters. Please use the following script to process and split the data:
+Since there is no official development set in the Super-NaturalInstructions, we randomly select 100 tasks from the "excluded" set as the development set, a maximum of 100 instances per task, to tune the hyper-parameters. Please use the following script to process and split the data:
 
 ```bash
 sh setup_data.sh
