@@ -85,4 +85,4 @@ with open(split_path+"/excluded_tasks.txt", "w") as f:
 
 print("\n" + "="*40 + "\n")
 print("all excluded tasks: ",len(all_te_tasks))
-print("en num: ",en_num,"non_en_num: ",non_en_num)
+print(f"en num: {en_num}",f"non_en_num: {non_en_num}",sep="\t")
