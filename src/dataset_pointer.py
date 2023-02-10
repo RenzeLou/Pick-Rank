@@ -108,6 +108,7 @@ class NaturalInstructions(datasets.GeneratorBasedBuilder):
                         "output": [datasets.Value("string")],
                         "neg_output": [datasets.Value("string")]
                     },
+                    "Instance License": [datasets.Value("string")]
                 }
             ),
             supervised_keys=None,
