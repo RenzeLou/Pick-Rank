@@ -414,97 +414,7 @@ class NITrainingArguments(Seq2SeqTrainingArguments):
     log_likelihood: Optional[bool ] = field(
         default=False,   ####
     )
-# def train_classifier(model_D:AutoModelForSequenceClassification,tokenizer_D:AutoTokenizer,
-#                      model_G:AutoModelForSeq2SeqLM,tokenizer_G:AutoTokenizer,
-#                     training_args:NITrainingArguments,data_args:DataTrainingArguments,
-#                     optimizer_D:AdamW,sample_num_per_task=50,phase="Pretrain"):
-#     assert phase in ["ADV","Pretrain"]
-#     save_path = training_args.pretrain_save_path if phase=="Pretrain" else os.path.join(training_args.output_dir,"classifier")
-#     d_step = training_args.d_step if phase=="Pretrain" else training_args.adv_d_step
-#     d_epoch = training_args.d_epoch if phase=="Pretrain" else training_args.adv_d_epoch 
-#     batch_size = training_args.pre_train_batch_size if phase=="Pretrain" else training_args.per_device_train_batch_size
-#     sample_num_per_task = 2 if phase=="ADV" else sample_num_per_task
-#     ## randomly sample positive samples
-#     logger.info(f" '{phase}': sample POS examples")
-#     pos_exps_D, pos_exps_D_diff = sample_pos(task_path=data_args.task_dir_adv,split_path=data_args.data_dir,
-#                                             sample_num_per_task=sample_num_per_task,diff=True)
-#     ## sample negative examples
-#     ## use pretrained generator to generate silver y (neg samples)
-#     logger.info(f" '{phase}': sample NEG examples (use generator to pred)")
-#     neg_exps_D = sample_neg(pos_exps=pos_exps_D_diff,generator=model_G,tokenizer=tokenizer_G,
-#                             batch_size=batch_size,
-#                             multinomial=training_args.multinomial)
-#     # neg_exps_D = pos_exps_D_diff
-#     assert len(pos_exps_D_diff) == len(neg_exps_D), "should be the same length, check the func again"
-#     logger.info(f"training num ==> POS: {len(pos_exps_D)}; NEG: {len(neg_exps_D)}")
-#     ## shuffle and split train/eval (9:1)
-#     train_num_pos, train_num_neg = int(len(pos_exps_D) * 9 / 10), int(len(neg_exps_D) * 9 / 10)
-#     train_data_D = pos_exps_D[:train_num_pos] + neg_exps_D[:train_num_neg]
-#     eval_data_D = pos_exps_D[train_num_pos:] + neg_exps_D[train_num_neg:]
-#     eval_loader_D = SimpleDataloader(SimpleDataset(eval_data_D),batch_size=batch_size,pin_memory=True,shuffle=True)
-#     train_loader_D = SimpleDataloader(SimpleDataset(train_data_D),batch_size=batch_size,pin_memory=True,shuffle=True)
-#     softmax = torch.nn.Softmax(dim=1)
-#     test_results = ""
-#     for step in range(d_step):
-#         logger.info(f" Train Classifier Step {step+1}")
-#         ## train the classifier
-#         for epoch in range(d_epoch):
-#             logger.info(f" === Epoch {epoch+1} === ")
-#             all_tr_loss = []
-#             model_D.train()
-#             for i, batch_features in enumerate(tqdm(train_loader_D)):
-#                 batch_inputs = feature2input_D(batch_features,tokenizer_D,next(model_D.parameters()).device)
-#                 output = model_D(**batch_inputs)
-#                 loss = output.loss
-#                 loss.backward()
-#                 optimizer_D.step()
-#                 model_D.zero_grad()
-                
-#                 all_tr_loss.append(loss.item())
-#                 ## when doing ADV train, just training 10 batches each epoch
-#                 if phase == "ADV" and i >= 10:
-#                     logger.info("==> avg tr loss = %.4f" % (np.mean(all_tr_loss))) 
-#                     break
-#             logger.info("==> avg tr loss = %.4f" % (np.mean(all_tr_loss))) 
-#         # each step, shuffle the trainng data
-#         train_loader_D = SimpleDataloader(SimpleDataset(train_data_D),batch_size=batch_size,pin_memory=True,shuffle=True)
-#         ## test (for observation)
-#         all_te_loss = []
-#         preds,labels,ins_lis = [],[],[]
-#         model_D.eval()
-#         with torch.no_grad():
-#             for i, batch_features in enumerate(tqdm(eval_loader_D)):
-#                 batch_inputs = feature2input_D(batch_features,tokenizer_D,next(model_D.parameters()).device)
-#                 outputs = model_D(**batch_inputs)
-#                 prob = softmax(outputs.logits)  # [1,2]
-#                 prob = prob.detach().cpu().numpy()
-#                 pred = np.argmax(prob,axis=1)
-#                 preds.extend(pred.tolist())
-#                 labels.extend(batch_inputs["labels"].detach().cpu().numpy().tolist())
-#                 ins_lis.extend(batch_features) if isinstance(batch_features[0],dict) else ins_lis.extend(batch_features[0]) 
-#                 all_te_loss.append(outputs.loss.item())
-#         acc = accuracy_score(labels,preds)
-#         ma_f1 = f1_score(labels,preds,average="macro")
-#         mi_f1 = f1_score(labels,preds,average="micro")
-#         logger.info("==> avg te loss = %.4f;  te_acc = %.2f; te_macro_f1 = %.2f; te_micro_f1 = %.2f" % (np.mean(all_te_loss),acc*100,ma_f1*100,mi_f1*100)) 
-#         test_results += "==> avg te loss = %.4f;  te_acc = %.2f; te_macro_f1 = %.2f; te_micro_f1 = %.2f\n" % (np.mean(all_te_loss),acc*100,ma_f1*100,mi_f1*100)
-    
-#     if save_path is not None:
-#         os.makedirs(save_path,exist_ok=True)
-#         model_D.save_pretrained(save_path)
-#         tokenizer_D.save_pretrained(save_path)
-#         # save eval results
-#         with open(os.path.join(save_path,"eval_results.txt"),"w") as f:
-#             f.write(test_results)
-#         # save eval predictions
-#         assert len(preds) == len(labels) == len(ins_lis)
-#         with jsonlines.open(os.path.join(save_path,"eval_predictions.jsonl"),"w") as f:
-#             for p,l,ins in zip(preds,labels,ins_lis):
-#                 ins.pop("label")
-#                 a = {"pred":p,"label":l}
-#                 a.update(ins)
-#                 jsonlines.Writer.write(f,a)
-#         logger.info(f"Save the classifier at {save_path}. Save the eval results at {save_path}/eval_results.txt. Save the eval predictions at {save_path}/eval_predictions.jsonl.")
+
 def train_generator(model:AutoModelForSeq2SeqLM,tokenizer:AutoTokenizer,model_D:AutoModelForSequenceClassification,tokenizer_D:AutoTokenizer,
                     optimizer_G:AdamW,training_args,data_args,adv_epoch:int,save_generator:bool = True, sample_num_per_task:int = 2):
     adv_g_step = training_args.adv_g_step
@@ -1161,52 +1071,7 @@ def main():
             callbacks=[DenserEvalCallback] if training_args.denser_evaluation else None,
         )
         
-        # add mix ratio
-        # trainer.init_hyper(pos_neg_ratio=training_args.pos_neg_ratio,margin_pos=training_args.margin_pos,
-        #                    margin_null=training_args.margin_null,margin_out=training_args.margin_out,
-        #                    margin_neg=training_args.margin_neg,neg_loss_type=training_args.neg_loss_type,
-        #                    null_loss_type=training_args.null_loss_type,out_loss_type=training_args.out_loss_type,
-        #                    loss_mix_ratio_neg=training_args.loss_mix_ratio_neg,
-        #                    loss_mix_ratio_null=training_args.loss_mix_ratio_null,
-        #                    loss_mix_ratio_out=training_args.loss_mix_ratio_out,
-        #                    sample_num_neg=data_args.sample_num_neg,
-        #                    sample_num_pos=data_args.sample_num_pos,main_loss_warm=data_args.main_loss_warm)
-        # if trainer.args.num_train_epochs <= trainer.main_loss_warm:
-        #     logger.warning("num_train_epochs: {} <= main_loss_warm: {}, that is, no constractive will be applied!".format(
-        #         trainer.args.num_train_epochs,
-        #         trainer.main_loss_warm))
-        # trainer.init_hyper()
-
         all_metrics = {"run_name": training_args.run_name}
-
-        # Training
-        # if training_args.do_train:
-        #     checkpoint = None
-        #     if training_args.resume_from_checkpoint is not None:
-        #         checkpoint = training_args.resume_from_checkpoint
-        #     elif last_checkpoint is not None:
-        #         checkpoint = last_checkpoint
-        #     train_result = trainer.train(resume_from_checkpoint=checkpoint)
-        #     trainer.save_model()  # Saves the tokenizer too for easy upload
-
-        #     metrics = train_result.metrics
-        #     max_train_samples = (
-        #         data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
-        #     )
-        #     metrics["train_samples"] = min(max_train_samples, len(train_dataset))
-        #     metrics["all_optimize_steps"] = model.all_step
-        #     metrics["obvious_neg_steps"] = model.obvious
-        #     trainer.log_metrics("train", metrics)
-            
-        #     if model.all_step != 0:
-        #         metrics["obvious_percentage"] = str(round((model.obvious / model.all_step) * 100, 2)) + "%"
-        #     else:
-        #         metrics["obvious_percentage"] = "NAN"
-        #     metrics["loss_record"] = model.loss_record
-        #     trainer.save_metrics("train", metrics)
-        #     trainer.save_state()
-
-        #     all_metrics.update(metrics)
 
         # Evaluation
         results = {}
@@ -1216,17 +1081,6 @@ def main():
             else data_args.max_target_length
         )
         num_beams = data_args.num_beams if data_args.num_beams is not None else training_args.generation_num_beams
-
-        # if training_args.do_eval:
-        #     logger.info("*** Evaluate ***")
-        #     metrics = trainer.evaluate(max_length=max_length, num_beams=num_beams, metric_key_prefix="eval")
-        #     max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(eval_dataset)
-        #     metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
-
-        #     trainer.log_metrics("eval", metrics)
-        #     trainer.save_metrics("eval", metrics)
-
-        #     all_metrics.update(metrics)
         
         logger.info("*** Predict ***")
 
@@ -1263,21 +1117,6 @@ def main():
     if (training_args.do_train or training_args.do_eval or training_args.do_predict) and trainer.is_world_process_zero():
         with open(os.path.join(training_args.output_dir, "metrics.json"), "w") as fout:
             fout.write(json.dumps(all_metrics))
-
-    # if training_args.do_demo:
-    #     logger.info("Serving the model as a demo...")
-    #     user_input = ''
-    #     trainer._max_length = max_length
-    #     trainer._num_beams = num_beams
-    #     while True:
-    #         user_input = input("Please enter your input to the model, or enter 'quit' to exit: ")
-    #         if user_input.lower() == "quit":
-    #             break
-    #         inputs = tokenizer([user_input], return_tensors="pt")
-    #         _, preds, _ = trainer.prediction_step(model, inputs=inputs, prediction_loss_only=False)
-    #         print(f"Model generates: {tokenizer.decode(preds[0], skip_special_tokens=True)}\n\n")
-
-    # return results
 
 
 def _mp_fn(index):

@@ -1,5 +1,4 @@
 # data
-# data/
 beaker_configs/ni_*.yaml
 backup/
 
@@ -188,7 +187,6 @@ output_pointer_compare_rep_ori/runs/
 output_pointer_compare_rep_ori/runs/Jan15_21-14-30_acl/
 output_pointer_first_train-v2_add_pos/
 output_pointer_final/
-Tk-Instruct-2/
 *.example
 *.example.e*
 *.example.o*
