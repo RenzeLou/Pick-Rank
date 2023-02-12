@@ -1,4 +1,5 @@
 #!/bin/bash
+# used for training and evaluation
 set -x
 
 export gpu=0

@@ -1,4 +1,5 @@
 #!/bin/bash
+# used for loading a trained model and evaluating on the test set
 set -x
 
 export gpu=0
@@ -26,7 +27,7 @@ export lr_encoder=5e-6 # learning rate for the encoder
 export lr_proj=3e-4 # learning rate for the projection layer
 
 
-# ======================================== Training ========================================
+# ======================================== Testing ========================================
 export EXP="${model}"
 echo "experiment name: $EXP"
 
