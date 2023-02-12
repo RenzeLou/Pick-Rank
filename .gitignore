@@ -202,3 +202,5 @@ output_test/
 *.swp
 *.lock
 plot/
+run_small.sh
+run_small_eval.sh

@@ -41,6 +41,7 @@ from transformers.utils import logging as hug_logging
 from filelock import FileLock
 from transformers import (
     AutoConfig,
+    AutoModel,
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
@@ -540,22 +541,25 @@ def main():
             pointer_encoder_save_dir= os.path.join(training_args.output_dir, training_args.pointer_encoder_checkpoint)
             # if the checkpoint is a directory, load the model from the directory
             if os.path.isdir(pointer_encoder_save_dir):
-                # initialize the T5Stack
-                shared = nn.Embedding(config.vocab_size, config.d_model)
-                encoder_config = copy.deepcopy(config)
-                # TODO: or load the saved config
-                # encoder_config = AutoConfig.from_pretrained(pointer_encoder_save_dir)
+                # load the saved config
+                encoder_config = AutoConfig.from_pretrained(pointer_encoder_save_dir)
                 encoder_config.is_decoder = False
                 encoder_config.use_cache = False
                 encoder_config.is_encoder_decoder = False
-                pointer_encoder = T5Stack(encoder_config, shared)
-                model.pointer_encoder = pointer_encoder.from_pretrained(
+                # load the saved embedding for the pointer_encoder
+                embed_tokens = nn.Embedding(config.vocab_size, config.d_model) # the shape should be (config.vocab_size, config.d_model)
+                embedding_file = os.path.join(pointer_encoder_save_dir, "pointer_encoder_embed_tokens.pth.tar")
+                embedding_checkpoint = torch.load(embedding_file)
+                embed_tokens.load_state_dict(embedding_checkpoint['state_dict'])
+                # load the saved T5Stack
+                model.pointer_encoder = T5Stack.from_pretrained(
                     pointer_encoder_save_dir,
                     from_tf=bool(".ckpt" in model_args.model_name_or_path),
                     config=encoder_config,
                     cache_dir=model_args.cache_dir,
                     revision=model_args.model_revision,
                     use_auth_token=True if model_args.use_auth_token else None,
+                    embed_tokens=embed_tokens
                 )
             else:
                 raise ValueError("=> no such pointer encoder checkpoint: '{}', please check your chechpoint name!".format(pointer_encoder_save_dir))
@@ -766,11 +770,18 @@ def main():
         
         trainer.save_model()  # Saves the tokenizer too for easy upload
         if hasattr(model,"pointer_projector"):
+            # save the pointer by default 
             pointer_save_file = os.path.join(training_args.output_dir, "pointer.pth.tar")
-            torch.save({'state_dict': model.pointer_projector.state_dict()}, pointer_save_file)  # save the pointer by default 
+            torch.save({'state_dict': model.pointer_projector.state_dict()}, pointer_save_file)  
         if hasattr(model,"pointer_encoder"):
+            # save T5 Stack
             pointer_encoder_save_dir = os.path.join(training_args.output_dir, "pointer_encoder")
             model.pointer_encoder.save_pretrained(pointer_encoder_save_dir)
+            # save the token_embedding
+            if hasattr(model.pointer_encoder, "embed_tokens"):
+                pointer_encoder_save_file = os.path.join(pointer_encoder_save_dir, "pointer_encoder_embed_tokens.pth.tar")
+                torch.save({'state_dict': model.pointer_encoder.embed_tokens.state_dict()}, pointer_encoder_save_file)
+                logger.info("save pointer_encoder embed_tokens to {}, shape: {}".format(pointer_encoder_save_file, model.pointer_encoder.embed_tokens.weight.shape))
 
     # Evaluation
     results = {}
