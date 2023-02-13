@@ -14,14 +14,10 @@ export CUDA_LAUNCH_BLOCKING="1"
 # If you use the other models (e.g., t5-large, t5-3b), please tune the hyperparameters again on the dev set
 export model="t5-base"  
 # ======================================== Hyperparameters ========================================
-export learning_rate="5e-05"
 export sample_num_pos=5  # maximum candidate sentences
 export seq_len=1536  # maximum input length
 export last_sen_num=0 # deprecated, set to 0
 export sample_times=2 # the Gumbel-Softmax sampling times (i.e., the $k$ in our paper)
-export loss_mix_ratio_null=1
-export margin_null=0.1
-export pointer_train_epoch=2  # epoch number for pre-tuning the pointer network
 export pooling="mean" # the pooling method for the sentence-level representations in the pointer network
 export lr_encoder=5e-6 # learning rate for the encoder
 export lr_proj=3e-4 # learning rate for the projection layer
@@ -57,7 +53,7 @@ python src/run.py \
     --bf16 \
     --run_name t5-experiment \
     --exp_name $EXP \
-    --seed 42 \
+    --seed 3407 \
     --sample_num_pos ${sample_num_pos} \
     --pooling ${pooling} \
     --save_pointer_choice \

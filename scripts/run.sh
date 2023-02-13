@@ -21,7 +21,8 @@ export last_sen_num=0 # deprecated, set to 0
 export sample_times=2 # the Gumbel-Softmax sampling times (i.e., the $k$ in our paper)
 export loss_mix_ratio_null=1
 export margin_null=0.1
-export pointer_train_epoch=2  # epoch number for pre-tuning the pointer network
+export num_train_epochs=2
+export pointer_train_epoch=1  # epoch number for pre-tuning the pointer network
 export pooling="mean" # the pooling method for the sentence-level representations in the pointer network
 export lr_encoder=5e-6 # learning rate for the encoder
 export lr_proj=3e-4 # learning rate for the projection layer
@@ -58,6 +59,7 @@ python src/run.py \
     --per_device_eval_batch_size $batch \
     --gradient_accumulation_steps 2 \
     --learning_rate ${learning_rate} \
+    --num_train_epochs ${num_train_epochs} \
     --lr_scheduler_type constant \
     --warmup_steps 0 \
     --logging_strategy steps \
@@ -68,7 +70,7 @@ python src/run.py \
     --bf16 \
     --run_name t5-experiment \
     --exp_name $EXP \
-    --seed 42 \
+    --seed 3407 \
     --sample_num_pos ${sample_num_pos} \
     --margin_null ${margin_null} \
     --loss_mix_ratio_null ${loss_mix_ratio_null} \
@@ -83,4 +85,5 @@ python src/run.py \
     --sample_times ${sample_times} \
     --pointer_train_epoch ${pointer_train_epoch} \
     --prob_save_file gold_token_prob_on_repeated_def \
-    --prob_save_on_rep
+    --prob_save_on_rep \
+    --ranking_forbiden_on_pointer

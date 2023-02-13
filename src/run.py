@@ -266,8 +266,11 @@ class DataTrainingArguments:
 @dataclass
 class NITrainingArguments(Seq2SeqTrainingArguments):
     num_train_epochs: float = field(
-        default=2.5,
+        default=2,
         metadata={"help": "Total number of training epochs to perform."}
+    )
+    seed: int = field(
+        default=42,
     )
     denser_evaluation: Optional[bool] = field(
         default=False,
