@@ -1,6 +1,8 @@
-This repository contains the code for the paper .... We use pointer network to pick up several critical sentences from the task definition, and then utilize an additional training objective (i.e., ranking loss) to train the text-to-text language model.
+This repository contains the code for the paper "[*Forget Demonstrations, Focus on Learning from Textual Instructions*](https://arxiv.org/abs/2308.03795)".
 
-...picture
+We use pointer network to pick up several critical sentences from the task definition, and then utilize an additional training objective (i.e., ranking loss) to train the text-to-text language model.
+
+[![model](./pics/model.png)](https://arxiv.org/abs/2308.03795)
 
 The main system requirements:
 - Python == 3.8.0
@@ -57,3 +59,14 @@ python read_results.py
 <!-- It is worth noting that, we follow the previous work randomly selecting 100 instances from each training task, the model performances can be varied due to the randomness in the training instances. -->
 
 ## Citation
+
+Please cite this paper if you use any scores or scripts of this repository:
+
+```bibtex
+@article{lou2023forget,
+  title={Forget demonstrations, focus on learning from textual instructions},
+  author={Lou, Renze and Yin, Wenpeng},
+  journal={arXiv preprint arXiv:2308.03795},
+  year={2023}
+}
+```
